@@ -85,6 +85,7 @@ function withDelay(d){
                             return true;
                         } else {
                             i = n0;
+                            // TODO: this could use handlingInitialCase: (also below)
                             if( superLoopStep() ){
                                 return slsN();
                             } else {
@@ -94,8 +95,23 @@ function withDelay(d){
                     });
                 // foreach style:
                 } else {
-                    slsN = function(){
-                    }
+                    var arr = x,
+                        i = 0,
+                        nN = arr.length - 1;
+                    slsN = handlingInitialCase(function(){
+                        if(i <= nN){
+                            bindings[nm] = arr[i];
+                            i++;
+                            return true;
+                        } else {
+                            i = 0;
+                            if( superLoopStep() ){
+                                return slsN();
+                            } else {
+                                return false;
+                            }
+                        }
+                    });
                 }
                 return DLoop(slsN);
             }
