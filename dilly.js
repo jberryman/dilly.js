@@ -20,7 +20,6 @@ function withDelay(d){
         }
     }
 
-
     // superLoopStep is a function that performs a nested loop iteration and
     // returns a Bool indicating if we should run the body:
     function DLoop(superLoopStep){
@@ -49,9 +48,8 @@ function withDelay(d){
                 // initialize parent loop, returning a new superLoopStep with
                 // while functionality rolled in
                 var slsN = superStepGuard(function(){
-                    // TODO: run pf in context doEnv
                     // if while predicate returns True, signal go-ahead to loop body:
-                    if ( pf() ){
+                    if ( pf.call(doEnv) ){
                         return true;
                     // otherwise run the next iteration of the outer-loop:
                     } else {
@@ -124,10 +122,3 @@ function withDelay(d){
     }
     return o;
 }
-// TODO: return some object we can use to control loop
-
-// THEN: while is stupid in this setting: instead do foreach and range-style for
-// THEN, make DLoop proper object, with updateable 'delay' as method of 'do'
-// THEN, add 'foreach' and 'while'
-// THEN play with passing a dictionary of "bound" names
-
