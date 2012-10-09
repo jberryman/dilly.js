@@ -26,7 +26,7 @@ function withDelay(d){
     function DLoop(superLoopStep){
         // the fact that loops like while(false) and forrange(1:0) might never
         // run, makes the initial case a bit messy. We define a helper
-        function handlingInitialCase(f){
+        function superStepGuard(f){
             return superLoopStep() ? f : function(){ return false }
         }
         return {
@@ -48,7 +48,7 @@ function withDelay(d){
             while: function(pf){
                 // initialize parent loop, returning a new superLoopStep with
                 // while functionality rolled in
-                var slsN = handlingInitialCase(function(){
+                var slsN = superStepGuard(function(){
                     // TODO: run pf in context doEnv
                     // if while predicate returns True, signal go-ahead to loop body:
                     if ( pf() ){
@@ -78,19 +78,14 @@ function withDelay(d){
                     }
                     var i = n0; // incremented and reset below
                                 // will be out of range on last loop check
-                    slsN = handlingInitialCase(function(){
+                    slsN = superStepGuard(function(){
                         if(i <= nN){
                             bindings[nm] = i;
                             i += step;
                             return true;
                         } else {
                             i = n0;
-                            // TODO: this could use handlingInitialCase: (also below)
-                            if( superLoopStep() ){
-                                return slsN();
-                            } else {
-                                return false;
-                            }
+                            return superStepGuard(slsN)();
                         }
                     });
                 // foreach style:
@@ -98,18 +93,14 @@ function withDelay(d){
                     var arr = x,
                         i = 0,
                         nN = arr.length - 1;
-                    slsN = handlingInitialCase(function(){
+                    slsN = superStepGuard(function(){
                         if(i <= nN){
                             bindings[nm] = arr[i];
                             i++;
                             return true;
                         } else {
                             i = 0;
-                            if( superLoopStep() ){
-                                return slsN();
-                            } else {
-                                return false;
-                            }
+                            return superStepGuard(slsN)();
                         }
                     });
                 }
