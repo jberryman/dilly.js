@@ -24,6 +24,11 @@ function withDelay(d){
     // superLoopStep is a function that performs a nested loop iteration and
     // returns a Bool indicating if we should run the body:
     function DLoop(superLoopStep){
+        // the fact that loops like while(false) and forrange(1:0) might never
+        // run, makes the initial case a bit messy. We define a helper
+        function handlingInitialCase(f){
+            return superLoopStep() ? f : function(){ return false }
+        }
         return {
             do: function(f){
                 function doL(){
@@ -41,8 +46,10 @@ function withDelay(d){
             },
             // pass a function returning a boolean val
             while: function(pf){
-                // roll a new superLoopStep:
-                var slsN = function(){
+                // initialize parent loop, returning a new superLoopStep with
+                // while functionality rolled in
+                var slsN = handlingInitialCase(function(){
+                    // TODO: run pf in context doEnv
                     // if while predicate returns True, signal go-ahead to loop body:
                     if ( pf() ){
                         return true;
@@ -50,7 +57,7 @@ function withDelay(d){
                     } else {
                         return superLoopStep();
                     }
-                }
+                });
                 return DLoop(slsN);
             },
             // pass a string to be used as bound name, and just an array for a 
@@ -71,11 +78,7 @@ function withDelay(d){
                     }
                     var i = n0; // incremented and reset below
                                 // will be out of range on last loop check
-                    slsN = function(){
-                        // TODO: how can we initialize but also get proper ruby range behavior
-                        // if((i + step) > xN){
-                        //     // we delete before user cn query out-of-range bound var here:
-                        // }
+                    slsN = handlingInitialCase(function(){
                         if(i <= nN){
                             bindings[nm] = i;
                             i += step;
@@ -88,7 +91,7 @@ function withDelay(d){
                                 return false;
                             }
                         }
-                    }
+                    });
                 // foreach style:
                 } else {
                     slsN = function(){
@@ -98,16 +101,23 @@ function withDelay(d){
             }
         }
     }
-    o = DLoop(function(){ return false });
+    // define a function that runs child loops, for initialization:
+    var go = true;
+    var singletonLoop = function(){
+        var b = go;
+        go = false;
+        return b;
+    }
+    o = DLoop(singletonLoop);
     // add a method to set final continuation, returning another DLoop object
     // but without `endingWith`
     o.endingWith = function(f){ 
         endCont = f;
-        return DLoop(function(){ return false });
+        return DLoop(singletonLoop);
     }
     return o;
 }
-
+// TODO: return some object we can use to control loop
 
 // THEN: while is stupid in this setting: instead do foreach and range-style for
 // THEN, make DLoop proper object, with updateable 'delay' as method of 'do'
