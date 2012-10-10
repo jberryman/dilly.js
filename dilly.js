@@ -1,3 +1,15 @@
+// dilly.js 
+// version: 0.1
+// license: LICENSE (BSD3)
+//
+// ------------------------------
+// This gave me a lot of grief, and I'm convinced the approach is much more
+// clunky than it needs to be, but hopefully things should work as expected.
+// ------------------------------
+//
+// CHANGES:
+//     (initial release)
+//
 function withDelay(d){
     var bindings = {"test": 1},
         endCont = function(){},
