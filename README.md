@@ -13,7 +13,7 @@ as one or several nested loops, with a delay on the inner loop like
     exit_stuff();
 
 ...but JavaScript only provides the non-blocking 
-`(setTimeout)[https://developer.mozilla.org/en-US/docs/window.setTimeout]`
+`[setTimeout](https://developer.mozilla.org/en-US/docs/window.setTimeout)`
 which necessitates an inversion of control and makes our simple algorithm
 clumsy to write and very difficult to read.
 
@@ -26,7 +26,7 @@ similar to jQuery or list comprehensions. Here are some examples:
 
 ### Examples
 
-a simple "while" game loop that gets progressively faster. When done, the script
+A simple "while" game loop that gets progressively faster. When done, the script
 continues with `exit_stuff()`.
 
     // "while" is passed a predicate that returns a Bool, so
@@ -44,11 +44,11 @@ continues with `exit_stuff()`.
             })
     
 
-nested "foreach" and "forRange" style loops, running with no delay and without
+Nested "foreach" and "forRange" style loops, running with no delay and without
 any explicit continuation (i.e. control is immediately passed to `other_stuff`
 while the loop continues running in the background).
 
-range/step loop behavior esoterica should follow ruby's model
+Range/step loop behavior esoterica should follow ruby's behavior.
 
     withDelay()
         .for("x",1,2)                // range: 1, 2
@@ -62,7 +62,7 @@ range/step loop behavior esoterica should follow ruby's model
     other_stuff;
 
 
-a list comprehension-style `guard` function:
+A list comprehension-style `guard` function:
 
     withDelay(1000).endingWith( function(){console.log("done")} )
         .for("x",1,5)               
