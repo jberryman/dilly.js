@@ -26,8 +26,8 @@ similar to jQuery or list comprehensions. Here are some examples:
 
 ### Examples
 
-a simple "while" game loop that gets progressively faster. when done, the script
-continues with `exit_stuff()`
+a simple "while" game loop that gets progressively faster. When done, the script
+continues with `exit_stuff()`.
 
     // "while" is passed a predicate that returns a Bool, so
     var b = true,

@@ -48,8 +48,13 @@ function withDelay(d){
                     if( superLoopStep() ){
                         // call user-supplied function in 'doEnv' environment
                         f.call(doEnv);
-                        // TODO: benchmark, and possibly call `doL` directly when delay === 0
-                        setTimeout(doL , delay);
+                        // This "optimization" is massive for loops where we
+                        // have a delay of zero. wat.
+                        if(delay === 0){
+                            doL();
+                        } else {
+                            setTimeout(doL , delay);
+                        }
                     } else {
                         endCont();
                     }
