@@ -36,6 +36,7 @@ function withDelay(d){
                     if( superLoopStep() ){
                         // call user-supplied function in 'doEnv' environment
                         f.call(doEnv);
+                        // TODO: benchmark, and possibly call `doL` directly when delay === 0
                         setTimeout(doL , delay);
                     } else {
                         endCont();
@@ -43,6 +44,7 @@ function withDelay(d){
                 }
                 doL();
             },
+
             // pass a function returning a boolean val
             while: function(pf){
                 // initialize parent loop, returning a new superLoopStep with
@@ -58,6 +60,25 @@ function withDelay(d){
                 });
                 return DLoop(slsN);
             },
+
+            // from list comprehensions; skip loop iterations where predicate
+            // returns false
+            guard: function(pf){
+                var slsN = function(){
+                    if( superLoopStep() ){
+                        if( pf.call(doEnv) ){
+                            return true;
+                        } else {
+                            // TODO: this could exceed stack space
+                            return slsN();
+                        }
+                    } else {
+                        return false;
+                    }
+                }
+                return DLoop(slsN);
+            },
+
             // pass a string to be used as bound name, and just an array for a 
             // foreach-style loop, or two or three numbers for range-style loop.
             //
@@ -107,12 +128,12 @@ function withDelay(d){
         }
     }
     // define a function that runs child loops, for initialization:
-    var go = true;
-    var singletonLoop = function(){
-        var b = go;
-        go = false;
-        return b;
-    }
+    var go = true,
+        singletonLoop = function(){
+            var b = go;
+            go = false;
+            return b;
+        }
     o = DLoop(singletonLoop);
     // add a method to set final continuation, returning another DLoop object
     // but without `endingWith`
