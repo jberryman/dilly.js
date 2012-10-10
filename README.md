@@ -13,7 +13,7 @@ as one or several nested loops, with a delay on the inner loop like
     exit_stuff();
 
 ...but JavaScript only provides the non-blocking 
-`[setTimeout](https://developer.mozilla.org/en-US/docs/window.setTimeout)`
+[`setTimeout`](https://developer.mozilla.org/en-US/docs/window.setTimeout)
 which necessitates an inversion of control and makes our simple algorithm
 clumsy to write and very difficult to read.
 
